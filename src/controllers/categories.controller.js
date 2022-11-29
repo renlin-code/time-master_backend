@@ -1,4 +1,5 @@
-const Category = require("./../models/category.model")
+const Category = require("./../models/category.model");
+const Task = require("./../models/task.model");
 
 const getCategories = async (req, res) => {
     try {
@@ -62,4 +63,19 @@ const deleteCategory = async (req, res) => {
     }
 }
 
-module.exports = { getCategories, getCategory, createCategory, updateCategory, deleteCategory };
+const getCategoryTasks = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const tasks = await Task.findAll({
+            where: {
+                categoryId: id,
+            }
+        })
+        res.json(tasks);
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+module.exports = { getCategories, getCategory, createCategory, updateCategory, deleteCategory, getCategoryTasks };
