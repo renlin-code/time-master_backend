@@ -1,7 +1,7 @@
 const Category = require("../models/category.model");
 const Task = require("../models/task.model")
 
-class CategoriesService {
+class CategoryService {
     async findAll() {
         const allCategories = await Category.findAll();
         return allCategories;
@@ -39,4 +39,4 @@ class CategoriesService {
     }
 }
 
-module.exports = CategoriesService;
+module.exports = CategoryService;

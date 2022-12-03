@@ -2,6 +2,7 @@ const User = require("../models/user.model");
 const Task = require("../models/task.model")
 const Category = require("../models/category.model");
 
+const bcrypt = require("bcrypt");
 
 class UserServices {
     async findAll() {
@@ -14,8 +15,20 @@ class UserServices {
         return user;
     }
 
+    async findOneByEmail(email) {
+        const user = await User.findOne({
+            where: { email }
+        });
+        return user;
+    }
+
     async create(body) {
-        const user = await User.create(body);
+        const hash = await bcrypt.hash(body.password, 10);
+        const user = await User.create({
+            ...body,
+            password: hash
+        });
+        delete user.dataValues.password;
         return user;
     } 
     

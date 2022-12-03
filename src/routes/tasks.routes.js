@@ -1,8 +1,8 @@
 const { Router } = require("express");
-const TasksService = require("../services/tasks.service");
+const TaskService = require("../services/task.service");
 
 const router = Router();
-const tasksService = new TasksService();
+const tasksService = new TaskService();
 
 router.get("/tasks", async (req, res) => {
     try {
