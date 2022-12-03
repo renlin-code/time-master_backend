@@ -45,6 +45,7 @@ router.patch("/users/:id", async (req, res) => {
         return res.status(500).json({ message: error.message });
     }
 });
+
 router.delete("/users/:id", async (req, res) => {
     try {
         const { id } = req.params;
