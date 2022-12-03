@@ -1,8 +1,8 @@
 const { DataTypes } = require("sequelize");
-const sequelize = require("./../database/database");
-const Task = require("./task.model");
+const sequelize = require("../database/database");
+const Category = require("./category.model");
 
-const Category = sequelize.define("categories", {
+const User = sequelize.define("users", {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -14,21 +14,26 @@ const Category = sequelize.define("categories", {
         type: DataTypes.STRING,
         allowNull: false
     },
-    color: {
+    email: {
         type: DataTypes.STRING,
+        unique: true,
         allowNull: false
     },
+    password: {
+        type: DataTypes.STRING,
+        allowNull: false
+    }
 }, {
     timestamps: false
 });
 
-Category.hasMany(Task, {
-    foreignKey: "categoryId",
+User.hasMany(Category, {
+    foreignKey: "userId",
     sourceKey: "id"
 })
 
-Task.belongsTo(Category, {
-    foreignKey: "categoryId",
+Category.belongsTo(User, {
+    foreignKey: "userId",
     targetId: "id"
 })
-module.exports = Category;
+module.exports = User;

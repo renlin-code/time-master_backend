@@ -1,9 +1,6 @@
 const app = require("./app");
 const sequelize = require("./database/database");
 
-const Category = require("./models/category.model");
-const Task = require("./models/task.model");
-
 async function main() {
     try {
         await sequelize.sync();
