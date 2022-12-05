@@ -1,14 +1,20 @@
-const app = require("./app");
-const sequelize = require("./database/database");
+const express = require("express");
+const routerApi = require('./routes');
+const { logErrors, errorHandler, boomErrorHandler } = require("./middlewares/error.handler");
 
-async function main() {
-    try {
-        await sequelize.sync();
-        console.log("Connection has been established successfully!");
-        app.listen(3000);
-        console.log("Listening on port 3000");
-    } catch(error) {
-        console.error(`Unable to connect to the database: ${error}`)
-    }
-}
-main();
+const app = express();
+const port = process.env.PORT || 3000;
+
+app.use(express.json());
+
+
+routerApi(app);
+
+app.use(logErrors);
+app.use(boomErrorHandler);
+app.use(errorHandler);
+
+app.listen(port, () => {
+    console.log(`App listening on port ${port}...`);
+});
+  

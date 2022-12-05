@@ -1,13 +1,12 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("./../database/database");
-const Task = require("./task.model");
+const { Model, DataTypes } = require('sequelize');
 
-const Category = sequelize.define("categories", {
+const CATEGORY_TABLE = 'categories';
+
+const CategorySchema = {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-        unique: true,
         allowNull: false
     },
     name: {
@@ -17,18 +16,22 @@ const Category = sequelize.define("categories", {
     color: {
         type: DataTypes.STRING,
         allowNull: false
-    },
-}, {
-    timestamps: false
-});
+    }
+};
 
-Category.hasMany(Task, {
-    foreignKey: "categoryId",
-    sourceKey: "id"
-})
+class Category extends Model {
+    static associate() {
+    //associate
+    }
 
-Task.belongsTo(Category, {
-    foreignKey: "categoryId",
-    targetId: "id"
-})
-module.exports = Category;
+    static config(sequelize) {
+        return {
+            sequelize,
+            tableName: CATEGORY_TABLE,
+            modelName: 'Category',
+            timestamps: false
+        }
+    }
+}
+
+module.exports = { CATEGORY_TABLE, CategorySchema, Category };

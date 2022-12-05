@@ -1,30 +1,36 @@
-const User = require("../models/user.model");
-const Task = require("../models/task.model")
-const Category = require("../models/category.model");
+const boom = require('@hapi/boom');
+
+const { models } = require('./../libs/sequelize');
 
 const bcrypt = require("bcrypt");
 
-class UserServices {
+class UserService {
     async findAll() {
-        const allUsers = await User.findAll();
+        const allUsers = await models.User.findAll();
         return allUsers;
     }
 
     async findOne(id) {
-        const user = await User.findByPk(id);
+        const user = await models.User.findByPk(id);
+        if (!user) {
+            throw boom.notFound("User not found");
+        }
         return user;
     }
 
     async findOneByEmail(email) {
-        const user = await User.findOne({
+        const user = await models.User.findOne({
             where: { email }
         });
+        if (!user) {
+            throw boom.notFound("User not found");
+        }
         return user;
     }
 
     async create(body) {
         const hash = await bcrypt.hash(body.password, 10);
-        const user = await User.create({
+        const user = await models.User.create({
             ...body,
             password: hash
         });
@@ -45,30 +51,30 @@ class UserServices {
     }
 
 
-    async findAllItsCategories(id) {
-        const categories = await Category.findAll({
-            where: {
-                userId: id
-            }
-        });
-        return categories;
-    }
+    // async findAllItsCategories(id) {
+    //     const categories = await Category.findAll({
+    //         where: {
+    //             userId: id
+    //         }
+    //     });
+    //     return categories;
+    // }
 
-    async findAllItsTasks(id) {
-        const categories = await this.findAllItsCategories(id);
-        const tasks = await Promise.all(
-            categories.map (async i => {
-                return await Task.findAll({
-                    where: {
-                        categoryId: i.dataValues.id
-                    }
-                })
-            })
-        )
-        const flattedTasks = tasks.flat();
-        return flattedTasks;
-    }
+    // async findAllItsTasks(id) {
+    //     const categories = await this.findAllItsCategories(id);
+    //     const tasks = await Promise.all(
+    //         categories.map (async i => {
+    //             return await Task.findAll({
+    //                 where: {
+    //                     categoryId: i.dataValues.id
+    //                 }
+    //             })
+    //         })
+    //     )
+    //     const flattedTasks = tasks.flat();
+    //     return flattedTasks;
+    // }
 }
 
 
-module.exports = UserServices;
+module.exports = UserService;

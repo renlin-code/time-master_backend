@@ -1,18 +1,23 @@
-const Task = require("../models/task.model")
+const boom = require('@hapi/boom');
 
+const { models } = require('./../libs/sequelize');
+ 
 class TaskService {
     async findAll() {
-        const allTasks = await Task.findAll();
+        const allTasks = await models.Task.findAll();
         return allTasks;
     }
 
     async findOne(id) {
-        const task = await Task.findByPk(id);
+        const task = await models.Task.findByPk(id);
+        if (!task) {
+            throw boom.notFound("Task not found");
+        }
         return task;
     }
 
     async create(body) {
-        const task = await Task.create(body);
+        const task = await models.Task.create(body);
         return task;
     } 
     

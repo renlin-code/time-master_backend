@@ -1,19 +1,24 @@
-const Category = require("../models/category.model");
-const Task = require("../models/task.model")
+const boom = require('@hapi/boom');
+
+const { models } = require('./../libs/sequelize');
+
 
 class CategoryService {
     async findAll() {
-        const allCategories = await Category.findAll();
+        const allCategories = await models.Category.findAll();
         return allCategories;
     }
 
     async findOne(id) {
-        const category = await Category.findByPk(id);
+        const category = await models.Category.findByPk(id);
+        if (!category) {
+            throw boom.notFound("Category not found");
+        }
         return category;
     }
 
     async create(body) {
-        const category = await Category.create(body);
+        const category = await models.Category.create(body);
         return category;
     } 
     
@@ -29,14 +34,14 @@ class CategoryService {
         return { id };
     }
     
-    async findAllItsTasks(id) {
-        const tasks = await Task.findAll({
-            where: {
-                categoryId: id
-            }
-        });
-        return tasks;
-    }
+    // async findAllItsTasks(id) {
+    //     const tasks = await Task.findAll({
+    //         where: {
+    //             categoryId: id
+    //         }
+    //     });
+    //     return tasks;
+    // }
 }
 
 module.exports = CategoryService;

@@ -1,13 +1,12 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../database/database");
-const Category = require("./category.model");
+const { Model, DataTypes } = require('sequelize');
 
-const User = sequelize.define("users", {
+const USER_TABLE = 'users';
+
+const UserSchema = {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-        unique: true,
         allowNull: false
     },
     name: {
@@ -23,17 +22,21 @@ const User = sequelize.define("users", {
         type: DataTypes.STRING,
         allowNull: false
     }
-}, {
-    timestamps: false
-});
+}
 
-User.hasMany(Category, {
-    foreignKey: "userId",
-    sourceKey: "id"
-})
+class User extends Model {
+    static associate() {
+    //associate
+    }
 
-Category.belongsTo(User, {
-    foreignKey: "userId",
-    targetId: "id"
-})
-module.exports = User;
+    static config(sequelize) {
+        return {
+            sequelize,
+            tableName: USER_TABLE,
+            modelName: 'User',
+            timestamps: false
+        }
+    }
+}
+  
+module.exports = { USER_TABLE, UserSchema, User };

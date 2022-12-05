@@ -1,12 +1,12 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("./../database/database");
+const { Model, DataTypes } = require('sequelize');
 
-const Task = sequelize.define("tasks", {
+const TASK_TABLE = 'tasks';
+
+const TaskSchema = {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-        unique: true,
         allowNull: false
     },
     name: {
@@ -25,8 +25,22 @@ const Task = sequelize.define("tasks", {
         type: DataTypes.BOOLEAN,
         defaultValue: false
     },
-}, {
-    timestamps: false
-});
+};
 
-module.exports = Task;
+class Task extends Model {
+    static associate() {
+    //associate
+    }
+
+    static config(sequelize) {
+        return {
+            sequelize,
+            tableName: TASK_TABLE,
+            modelName: 'Task',
+            timestamps: false
+        }
+    }
+}
+
+module.exports = { TASK_TABLE, TaskSchema, Task };
+// module.exports = Task;
