@@ -1,5 +1,5 @@
 const { Model, DataTypes } = require('sequelize');
-
+const { CATEGORY_TABLE } = require("./category.model");
 const TASK_TABLE = 'tasks';
 
 const TaskSchema = {
@@ -25,11 +25,24 @@ const TaskSchema = {
         type: DataTypes.BOOLEAN,
         defaultValue: false
     },
+    categoryId: {
+        field: "category_id",
+        allowNull: false,
+        type: DataTypes.INTEGER,
+        refereces: {
+            model: CATEGORY_TABLE,
+            key: "id"
+        },
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL"
+    }
 };
 
 class Task extends Model {
-    static associate() {
-    //associate
+    static associate(models) {
+        this.belongsTo(models.Category, {
+            as: "category"
+        })
     }
 
     static config(sequelize) {
