@@ -6,12 +6,16 @@ const bcrypt = require("bcrypt");
 
 class UserService {
     async findAll() {
-        const allUsers = await models.User.findAll();
+        const allUsers = await models.User.findAll({
+            include: ["categories"]
+        });
         return allUsers;
     }
 
     async findOne(id) {
-        const user = await models.User.findByPk(id);
+        const user = await models.User.findByPk(id, {
+            include: ["categories"]
+        });
         if (!user) {
             throw boom.notFound("User not found");
         }

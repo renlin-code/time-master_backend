@@ -4,12 +4,16 @@ const { models } = require('./../libs/sequelize');
  
 class TaskService {
     async findAll() {
-        const allTasks = await models.Task.findAll();
+        const allTasks = await models.Task.findAll({
+            include: ["category"]
+        });
         return allTasks;
     }
 
     async findOne(id) {
-        const task = await models.Task.findByPk(id);
+        const task = await models.Task.findByPk(id, {
+            include: ["category"]
+        });
         if (!task) {
             throw boom.notFound("Task not found");
         }
