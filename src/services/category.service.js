@@ -35,15 +35,6 @@ class CategoryService {
         await category.destroy();
         return { id };
     }
-    
-    // async findAllItsTasks(id) {
-    //     const tasks = await Task.findAll({
-    //         where: {
-    //             categoryId: id
-    //         }
-    //     });
-    //     return tasks;
-    // }
 }
 
 module.exports = CategoryService;

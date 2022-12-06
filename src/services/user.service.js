@@ -6,9 +6,7 @@ const bcrypt = require("bcrypt");
 
 class UserService {
     async findAll() {
-        const allUsers = await models.User.findAll({
-            include: ["categories"]
-        });
+        const allUsers = await models.User.findAll();
         return allUsers;
     }
 
@@ -55,29 +53,30 @@ class UserService {
     }
 
 
-    // async findAllItsCategories(id) {
-    //     const categories = await Category.findAll({
-    //         where: {
-    //             userId: id
-    //         }
-    //     });
-    //     return categories;
-    // }
+    async findAllItsTasks(id) {
+        const user = await models.User.findByPk(id);
+        if (!user) {
+            throw boom.notFound("User not found");
+        }
 
-    // async findAllItsTasks(id) {
-    //     const categories = await this.findAllItsCategories(id);
-    //     const tasks = await Promise.all(
-    //         categories.map (async i => {
-    //             return await Task.findAll({
-    //                 where: {
-    //                     categoryId: i.dataValues.id
-    //                 }
-    //             })
-    //         })
-    //     )
-    //     const flattedTasks = tasks.flat();
-    //     return flattedTasks;
-    // }
+        const categories = await models.Category.findAll({
+            where: {
+                userId: id
+            }
+        });
+        const tasks = await Promise.all(
+            categories.map (async i => {
+                return await models.Task.findAll({
+                    where: {
+                        categoryId: i.dataValues.id,
+                    },
+                    include: ["category"]
+                })
+            })
+        )
+        const flattedTasks = tasks.flat();
+        return flattedTasks;
+    }
 }
 
 

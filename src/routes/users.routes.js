@@ -31,6 +31,19 @@ router.get("/:id",
     }
 );
 
+router.get("/:id/tasks", 
+    validatorHandler(getUserSchema, 'params'),
+    async (req, res, next) => {
+        try {
+            const { id } = req.params;
+            const tasks = await service.findAllItsTasks(id);
+            res.json(tasks);
+        } catch(error) {
+            next(error);
+        }
+    }
+);
+
 router.post("/",
     validatorHandler(createUserSchema, 'body'),
     async (req, res, next) => {
@@ -72,26 +85,5 @@ router.delete("/:id",
     }
 );
 
-// router.get("/:id/categories", async (req, res) => {
-//     try {
-//         const { id } = req.params;
-        
-//         const categories = await service.findAllItsCategories(id);
-//         res.json(categories);
-//     } catch(error) {
-//         return res.status(500).json({ message: error.message });
-//     }
-// });
-
-// router.get("/:id/tasks", async (req, res) => {
-//     try {
-//         const { id } = req.params;
-
-//         const tasks = await service.findAllItsTasks(id);
-//         res.json(tasks);
-//     } catch(error) {
-//         return res.status(500).json({ message: error.message });
-//     }
-// });
 
 module.exports = router;
