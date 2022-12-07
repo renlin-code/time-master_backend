@@ -20,16 +20,6 @@ class UserService {
         return user;
     }
 
-    async findOneByEmail(email) {
-        const user = await models.User.findOne({
-            where: { email }
-        });
-        if (!user) {
-            throw boom.notFound("User not found");
-        }
-        return user;
-    }
-
     async create(body) {
         const hash = await bcrypt.hash(body.password, 10);
         const user = await models.User.create({
@@ -53,12 +43,21 @@ class UserService {
     }
 
 
-    async findAllItsTasks(id) {
-        const user = await models.User.findByPk(id);
+
+
+
+    async findOneByEmail(email) {
+        const user = await models.User.findOne({
+            where: { email }
+        });
         if (!user) {
             throw boom.notFound("User not found");
         }
+        return user;
+    }
 
+    async findAllItsTasks(id) {
+        const user = this.findOne(id);
         const categories = await models.Category.findAll({
             where: {
                 userId: id
@@ -77,6 +76,29 @@ class UserService {
         const flattedTasks = tasks.flat();
         return flattedTasks;
     }
+
+    async findAllItsTasksByDate(id, date) {
+        const user = this.findOne(id);
+        const categories = await models.Category.findAll({
+            where: {
+                userId: id
+            }
+        });
+        const tasks = await Promise.all(
+            categories.map (async i => {
+                return await models.Task.findAll({
+                    where: {
+                        categoryId: i.dataValues.id,
+                        date
+                    },
+                    include: ["category"]
+                })
+            })
+        )
+        const flattedTasks = tasks.flat();
+        return flattedTasks;
+    }
+
 }
 
 

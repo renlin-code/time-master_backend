@@ -2,7 +2,7 @@ const { Router } = require("express");
 const UserService = require("../services/user.service");
 
 const validatorHandler = require('./../middlewares/validator.handler');
-const { updateUserSchema, createUserSchema, getUserSchema } = require('./../schemas/user.schema');
+const { updateUserSchema, createUserSchema, getUserSchema, getUserSchemaAndTasksDate } = require('./../schemas/user.schema');
 
 const router = Router();
 const service = new UserService();
@@ -37,6 +37,19 @@ router.get("/:id/tasks",
         try {
             const { id } = req.params;
             const tasks = await service.findAllItsTasks(id);
+            res.json(tasks);
+        } catch(error) {
+            next(error);
+        }
+    }
+);
+
+router.get("/:id/tasks/:date", 
+    validatorHandler(getUserSchemaAndTasksDate, 'params'),
+    async (req, res, next) => {
+        try {
+            const { id, date } = req.params;
+            const tasks = await service.findAllItsTasksByDate(id, date);
             res.json(tasks);
         } catch(error) {
             next(error);

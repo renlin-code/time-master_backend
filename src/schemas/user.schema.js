@@ -1,6 +1,7 @@
-const Joi = require("joi");
+const Joi = require("joi").extend(require('@joi/date'));
 
 const id = Joi.number().integer();
+const date = Joi.date().format('YYYY-MM-DD').utc();
 const name = Joi.string().min(3).max(15);
 const email = Joi.string().email();
 const password = Joi.string().min(4).max(8);
@@ -22,4 +23,9 @@ const getUserSchema = Joi.object({
   id: id.required()
 });
 
-module.exports = { createUserSchema, updateUserSchema, getUserSchema }
+const getUserSchemaAndTasksDate = Joi.object({
+  id: id.required(),
+  date: date.required()
+});
+
+module.exports = { createUserSchema, updateUserSchema, getUserSchema, getUserSchemaAndTasksDate }
