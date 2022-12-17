@@ -21,6 +21,12 @@ class UserService {
     }
 
     async create(body) {
+        const userDb = await models.User.findOne({
+            where: { email: body.email }
+        });
+        if (userDb) {
+            throw boom.conflict("This user already exists");
+        }
         const hash = await bcrypt.hash(body.password, 10);
         const user = await models.User.create({
             ...body,
@@ -44,8 +50,6 @@ class UserService {
 
 
 
-
-
     async findOneByEmail(email) {
         const user = await models.User.findOne({
             where: { email }
@@ -55,29 +59,6 @@ class UserService {
         }
         return user;
     }
-
-    // async findAllItsTasksByDate(id, date) {
-    //     const user = this.findOne(id);
-    //     const categories = await models.Category.findAll({
-    //         where: {
-    //             userId: id
-    //         }
-    //     });
-    //     const tasks = await Promise.all(
-    //         categories.map (async i => {
-    //             return await models.Task.findAll({
-    //                 where: {
-    //                     categoryId: i.dataValues.id,
-    //                     date
-    //                 },
-    //                 include: ["category"]
-    //             })
-    //         })
-    //     )
-    //     const flattedTasks = tasks.flat();
-    //     return flattedTasks;
-    // }
-
 }
 
 

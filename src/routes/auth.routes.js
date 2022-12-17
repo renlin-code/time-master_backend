@@ -2,13 +2,26 @@ const { Router } = require("express");
 const passport = require("passport");
 
 const validatorHandler = require('./../middlewares/validator.handler');
-const { loginUserSchema, recoveryUserSchema } = require('./../schemas/user.schema');
+const { createUserSchema, loginUserSchema, recoveryUserSchema } = require('./../schemas/user.schema');
 
 const AuthService = require("./../services/auth.service");
 const service = new AuthService();
 
 
 const router = Router();
+
+router.post("/signin", 
+    validatorHandler(createUserSchema, 'body'),
+    async (req, res, next) => {
+        try {
+            const body = req.body;
+            const result = await service.signIn(body);
+            res.json(result);
+        } catch(error) {
+            next(error);
+        }
+    }
+);
 
 router.post("/login", 
     validatorHandler(loginUserSchema, 'body'),

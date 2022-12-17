@@ -31,19 +31,6 @@ router.get("/:id",
     }
 );
 
-// router.get("/:id/tasks/:date", 
-//     validatorHandler(getUserSchemaAndTasksDate, 'params'),
-//     async (req, res, next) => {
-//         try {
-//             const { id, date } = req.params;
-//             const tasks = await service.findAllItsTasksByDate(id, date);
-//             res.json(tasks);
-//         } catch(error) {
-//             next(error);
-//         }
-//     }
-// );
-
 router.post("/",
     validatorHandler(createUserSchema, 'body'),
     async (req, res, next) => {

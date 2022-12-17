@@ -9,6 +9,25 @@ const service = new UserService();
 
 
 class AuthService {
+    async signIn(body) {
+        const user = await service.create(body);
+        const userWithToken = this.signToken(body);
+        const link = `https://fronted.com/dashboard?token=${userWithToken.token}`;
+        const mail = {
+            from: `"Time Master"<${config.smtpEmail}>`,
+            to: `${user.email}`,
+            subject: "Sign in confirmation",
+            html: `<p>Please, enter through this link to confirm your email => ${link}</p>`,
+        }
+        const result = await this.sendMail(mail);
+        return result;
+    }
+
+
+
+
+
+    
     async getUser(email, password) {
         const user = await service.findOneByEmail(email);
         if(!user) {
@@ -24,11 +43,9 @@ class AuthService {
 
     }
     signToken(user) {
-        const payload = {
-            sub: user.id
-        }
+        const payload = { sub: user.id };
 
-        const token = jwt.sign(payload, config.jwtSecret);
+        const token = jwt.sign(payload, config.jwtSecret, {expiresIn: "15min"});
         return {
             user,
             token
@@ -40,10 +57,10 @@ class AuthService {
         if(!user) {
             throw boom.unauthorized();
         }
-        const payload = { sub: user.id };
-        const token = jwt.sign(payload, config.jwtSecret, {expiresIn: "15min"});
-        const link = `https://fronted.com/recovery?token=${token}`;
-        await service.update(user.id, {recoveryToken: token});
+        const userAndToken = this.signToken(user);
+
+        const link = `https://fronted.com/recovery?token=${userAndToken.token}`;
+        await service.update(user.id, {recoveryToken: userAndToken.token});
 
         const mail = {
             from: `"Time Master"<${config.smtpEmail}>`,
