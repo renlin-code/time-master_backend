@@ -19,6 +19,7 @@ class AuthService {
             throw boom.unauthorized();
         }
         delete user.dataValues.password;
+        delete user.dataValues.recoveryToken;
         return user;
 
     }
@@ -34,26 +35,55 @@ class AuthService {
         };
     }
 
-    async sendMail(email) {
+    async sendRecovery(email) {
         const user = await service.findOneByEmail(email);
+        if(!user) {
+            throw boom.unauthorized();
+        }
+        const payload = { sub: user.id };
+        const token = jwt.sign(payload, config.jwtSecret, {expiresIn: "15min"});
+        const link = `https://fronted.com/recovery?token=${token}`;
+        await service.update(user.id, {recoveryToken: token});
+
+        const mail = {
+            from: `"Time Master"<${config.smtpEmail}>`,
+            to: `${user.email}`,
+            subject: "Password recovery",
+            html: `<p>Please, enter through this link to recover your password => ${link}</p>`,
+        }
+        const result = await this.sendMail(mail);
+        return result;
+    }
+
+    async changePassword(token, newPassword) {
+        try {
+            const payload = jwt.verify(token, config.jwtSecret);
+            const user = await service.findOne(payload.sub);
+            if(user.recoveryToken !== token) {
+                throw boom.unauthorized();
+            }
+            const hash = await bcrypt.hash(newPassword, 10);
+            await service.update(user.id, {recoveryToken: null, password: hash});
+            return { message: "password changed" };
+            
+        } catch (error) {
+            throw boom.unauthorized();
+        }
+    }
+
+    async sendMail(infoMail) {
 
         const transporter = nodemailer.createTransport({
             host: "smtp.gmail.com",
             port: 465,
-            secure: true, // true for 465, false for other ports
+            secure: true,
             auth: {
-              user: "info.timemaster@gmail.com",
-              pass: config.emailPassword
+              user: config.smtpEmail,
+              pass: config.smtpPassword
             },
           });   
           
-        await transporter.sendMail({
-            from: "info.timemaster@gmail.com", // sender address
-            to: `${user.email}`, // list of receivers
-            subject: "Test Mail", // Subject line
-            text: "Hello world?", // plain text body
-            html: "<b>Hello world?</b>", // html body
-        });
+        await transporter.sendMail(infoMail);
 
         return {message: "mail sent"};
     }

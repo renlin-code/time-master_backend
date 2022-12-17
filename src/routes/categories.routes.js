@@ -76,17 +76,4 @@ router.delete("/:id",
     }
 );
 
-// router.get("/:id/tasks",
-//     async (req, res) => {
-//         try {
-//             const { id } = req.params;
-
-//             const tasks = await service.findAllItsTasks(id);
-//             res.json(tasks);
-//         } catch(error) {
-//             return res.status(500).json({ message: error.message });
-//         }
-//     }
-// );
-
 module.exports = router;
