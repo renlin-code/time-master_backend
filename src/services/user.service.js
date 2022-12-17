@@ -56,48 +56,27 @@ class UserService {
         return user;
     }
 
-    async findAllItsTasks(id) {
-        const user = this.findOne(id);
-        const categories = await models.Category.findAll({
-            where: {
-                userId: id
-            }
-        });
-        const tasks = await Promise.all(
-            categories.map (async i => {
-                return await models.Task.findAll({
-                    where: {
-                        categoryId: i.dataValues.id,
-                    },
-                    include: ["category"]
-                })
-            })
-        )
-        const flattedTasks = tasks.flat();
-        return flattedTasks;
-    }
-
-    async findAllItsTasksByDate(id, date) {
-        const user = this.findOne(id);
-        const categories = await models.Category.findAll({
-            where: {
-                userId: id
-            }
-        });
-        const tasks = await Promise.all(
-            categories.map (async i => {
-                return await models.Task.findAll({
-                    where: {
-                        categoryId: i.dataValues.id,
-                        date
-                    },
-                    include: ["category"]
-                })
-            })
-        )
-        const flattedTasks = tasks.flat();
-        return flattedTasks;
-    }
+    // async findAllItsTasksByDate(id, date) {
+    //     const user = this.findOne(id);
+    //     const categories = await models.Category.findAll({
+    //         where: {
+    //             userId: id
+    //         }
+    //     });
+    //     const tasks = await Promise.all(
+    //         categories.map (async i => {
+    //             return await models.Task.findAll({
+    //                 where: {
+    //                     categoryId: i.dataValues.id,
+    //                     date
+    //                 },
+    //                 include: ["category"]
+    //             })
+    //         })
+    //     )
+    //     const flattedTasks = tasks.flat();
+    //     return flattedTasks;
+    // }
 
 }
 

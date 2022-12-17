@@ -35,6 +35,22 @@ class CategoryService {
         await category.destroy();
         return { id };
     }
+
+
+    async findByUser(userId) {
+        const categories = await models.Category.findAll({
+            where: {
+                userId
+            },
+            include: ["tasks"]
+        });
+        categories.map (i => {
+            delete i.dataValues.userId;
+        })
+
+        return categories;
+    }
+
 }
 
 module.exports = CategoryService;

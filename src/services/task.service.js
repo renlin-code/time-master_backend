@@ -36,6 +36,33 @@ class TaskService {
         await task.destroy();
         return { id };
     }   
+
+
+    
+    async findByUser(userId, date) {
+        const options = {
+            where: {
+                "$category.user.id$": userId
+            },
+            include: [
+                {
+                    association: "category",
+                    include: ["user"]
+                }
+            ]
+        }
+        if (date) {
+            options.where.date = date;
+        }
+        const tasks = await models.Task.findAll(options);
+
+        tasks.map (i => {
+            delete i.dataValues.category.dataValues.user;
+            delete i.dataValues.category.dataValues.userId;
+        })
+
+        return tasks;
+    }
 }
 
 module.exports = TaskService;

@@ -8,11 +8,11 @@ const important = Joi.boolean();
 const categoryId = Joi.number().integer();
 
 const createTaskSchema = Joi.object({
-   name: name.required(),
-   date: date.required(),
-   done: done.required(),
-   important: important.required(),
-   categoryId: categoryId.required()
+  name: name.required(),
+  date: date.required(),
+  done: done.required(),
+  important: important.required(),
+  categoryId: categoryId.required()
 });
 
 const updateTaskSchema = Joi.object({
@@ -28,4 +28,8 @@ const getTaskSchema = Joi.object({
   id: id.required()
 });
 
-module.exports = { createTaskSchema, updateTaskSchema, getTaskSchema }
+const queryTaskSchema = Joi.object({
+  date
+});
+
+module.exports = { createTaskSchema, updateTaskSchema, getTaskSchema, queryTaskSchema }

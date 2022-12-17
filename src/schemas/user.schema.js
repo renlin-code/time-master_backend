@@ -23,9 +23,5 @@ const getUserSchema = Joi.object({
   id: id.required()
 });
 
-const getUserSchemaAndTasksDate = Joi.object({
-  id: id.required(),
-  date: date.required()
-});
 
-module.exports = { createUserSchema, updateUserSchema, getUserSchema, getUserSchemaAndTasksDate }
+module.exports = { createUserSchema, updateUserSchema, getUserSchema }

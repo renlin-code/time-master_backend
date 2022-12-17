@@ -2,7 +2,7 @@ const { Router } = require("express");
 const TaskService = require("../services/task.service");
 
 const validatorHandler = require('./../middlewares/validator.handler');
-const { updateTaskSchema, createTaskSchema, getTaskSchema } = require('./../schemas/task.schema');
+const { updateTaskSchema, createTaskSchema, getTaskSchema, queryTaskSchema } = require('./../schemas/task.schema');
 
 const router = Router();
 const service = new TaskService();
