@@ -15,7 +15,7 @@ const categoryService = new CategoryService();
 router.get("/my-tasks", 
     validatorHandler(queryTaskSchema, 'query'),
     passport.authenticate("jwt", {session: false}),
-    async (req, res) => {
+    async (req, res, next) => {
         try {
             const user = req.user;
             const { date } = req.query;
@@ -23,20 +23,20 @@ router.get("/my-tasks",
             const tasks = await taskService.findByUser(user.sub, date);
             res.json(tasks);
         } catch(error) {
-            return res.status(500).json({ message: error.message });
+            next(error);
         }
     }
 );
 
 router.get("/my-categories", 
     passport.authenticate("jwt", {session: false}),
-    async (req, res) => {
+    async (req, res, next) => {
         try {
             const user = req.user;
             const categories = await categoryService.findByUser(user.sub);
             res.json(categories);
         } catch(error) {
-            return res.status(500).json({ message: error.message });
+            next(error);
         }
     }
 );

@@ -11,7 +11,7 @@ const service = new UserService();
 class AuthService {
     async signIn(body) {
         const user = await service.create(body);
-        const userWithToken = this.signToken(body);
+        const userWithToken = this.signToken(user);
         const link = `https://fronted.com/dashboard?token=${userWithToken.token}`;
         const mail = {
             from: `"Time Master"<${config.smtpEmail}>`,
@@ -22,11 +22,6 @@ class AuthService {
         const result = await this.sendMail(mail);
         return result;
     }
-
-
-
-
-
     
     async getUser(email, password) {
         const user = await service.findOneByEmail(email);
