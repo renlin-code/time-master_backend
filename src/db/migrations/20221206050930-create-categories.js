@@ -1,6 +1,10 @@
 'use strict';
 
 const { CATEGORY_TABLE } = require("./../models/category.model");
+const { USER_TABLE } = require("./../models/user.model");
+
+const { DataTypes } = require('sequelize');
+
 module.exports = {
   up: async(queryInterface) => {
     await queryInterface.createTable(CATEGORY_TABLE, {

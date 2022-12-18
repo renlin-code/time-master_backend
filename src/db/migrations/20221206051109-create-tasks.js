@@ -1,6 +1,9 @@
 'use strict';
 
 const { TASK_TABLE } = require("./../models/task.model");
+const { CATEGORY_TABLE } = require("./../models/category.model");
+const { DataTypes } = require('sequelize');
+
 module.exports = {
   up: async(queryInterface) => {
     await queryInterface.createTable(TASK_TABLE, {

@@ -1,16 +1,18 @@
 'use strict';
 
 const { USER_TABLE } = require("./../models/user.model");
+const { DataTypes } = require('sequelize');
+
 module.exports = {
-  async up (queryInterface, Sequelize) {
+  async up (queryInterface) {
     await queryInterface.addColumn(USER_TABLE, "recovery_token", {
       field: "recovery_token",
-      type: Sequelize.DataTypes.STRING,
+      type: DataTypes.STRING,
       allowNull: true
     })
   },
 
-  async down (queryInterface, Sequelize) {
+  async down (queryInterface) {
     await queryInterface.removeColumn(USER_TABLE, "recovery_token")
   }
 };
