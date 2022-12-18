@@ -22,18 +22,16 @@ const getCategorySchema = Joi.object({
   id: id.required()
 });
 
-// const createCategoryByUserSchema = Joi.object({
-//   name: name.required(),
-//   color: color.required(),
-//   userId: userId.required()
-// });
+const createCategoryByUserSchema = Joi.object({
+  name: name.required(),
+  color: color.required(),
+});
 
-// const updateCategoryByUserSchema = Joi.object({
-//   id,
-//   name,
-//   color,
-//   userId
-// });
+const updateCategoryByUserSchema = Joi.object({
+  id,
+  name,
+  color,
+});
 
 
-module.exports = { createCategorySchema, updateCategorySchema, getCategorySchema }
+module.exports = { createCategorySchema, updateCategorySchema, getCategorySchema, createCategoryByUserSchema, updateCategoryByUserSchema }

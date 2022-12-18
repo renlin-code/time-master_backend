@@ -27,6 +27,7 @@ class CategoryService {
     async update(id, body) {
         const category = await this.findOne(id);
         const updatedCategory = await category.update(body);
+        
         return updatedCategory;   
     }
     
@@ -44,13 +45,9 @@ class CategoryService {
             },
             include: ["tasks"]
         });
-        categories.map (i => {
-            delete i.dataValues.userId;
-        })
 
         return categories;
     }
-
 }
 
 module.exports = CategoryService;
