@@ -9,7 +9,7 @@ const service = new UserService();
 
 
 class AuthService {
-    async signIn(body) {
+    async signUp(body) {
         const user = await service.create(body);
         const userWithToken = this.signToken(user);
         const link = `https://fronted.com/dashboard?token=${userWithToken.token}`;

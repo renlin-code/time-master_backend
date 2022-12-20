@@ -4,6 +4,7 @@ const boom = require("@hapi/boom");
 
 const TaskService = require("../services/task.service");
 const CategoryService = require("../services/category.service");
+const UserService = require("./../services/user.service");
 
 const validatorHandler = require('./../middlewares/validator.handler');
 const { getTaskSchema, createTaskSchema, updateTaskSchema, queryTaskSchema } = require('./../schemas/task.schema');
@@ -12,6 +13,7 @@ const { getCategorySchema, createCategoryByUserSchema, updateCategoryByUserSchem
 const router = Router();
 const taskService = new TaskService();
 const categoryService = new CategoryService();
+const userService = new UserService();
 
 router.get("/my-tasks", 
     validatorHandler(queryTaskSchema, 'query'),

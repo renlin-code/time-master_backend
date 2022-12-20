@@ -2,7 +2,7 @@ const { Router } = require("express");
 const passport = require("passport");
 
 const validatorHandler = require('./../middlewares/validator.handler');
-const { createUserSchema, loginUserSchema, recoveryUserSchema } = require('./../schemas/user.schema');
+const { createUserSchema, signinUserSchema, recoveryUserSchema } = require('./../schemas/user.schema');
 
 const AuthService = require("./../services/auth.service");
 const service = new AuthService();
@@ -10,12 +10,12 @@ const service = new AuthService();
 
 const router = Router();
 
-router.post("/signin", 
+router.post("/signup", 
     validatorHandler(createUserSchema, 'body'),
     async (req, res, next) => {
         try {
             const body = req.body;
-            const result = await service.signIn(body);
+            const result = await service.signUp(body);
             res.json(result);
         } catch(error) {
             next(error);
@@ -23,8 +23,8 @@ router.post("/signin",
     }
 );
 
-router.post("/login", 
-    validatorHandler(loginUserSchema, 'body'),
+router.post("/signin", 
+    validatorHandler(signinUserSchema, 'body'),
     passport.authenticate("local", {session: false}),
     async (req, res, next) => {
         try {
