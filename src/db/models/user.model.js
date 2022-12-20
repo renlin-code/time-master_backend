@@ -22,6 +22,11 @@ const UserSchema = {
         type: DataTypes.STRING,
         allowNull: false
     },
+    signupToken: {
+        field: "signup_token",
+        type: DataTypes.STRING,
+        allowNull: true
+    },
     recoveryToken: {
         field: "recovery_token",
         type: DataTypes.STRING,
