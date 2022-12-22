@@ -29,8 +29,14 @@ module.exports = {
           type: DataTypes.STRING,
           allowNull: false
       },
-      signupToken: {
-          field: "signup_token",
+      isConfirmed: {
+          field: "is_confirmed",
+          type: DataTypes.BOOLEAN,
+          allowNull: true,
+          default: false
+      },
+      signUpToken: {
+          field: "sign_up_token",
           type: DataTypes.STRING,
           allowNull: true
       },

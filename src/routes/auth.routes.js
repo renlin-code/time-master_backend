@@ -2,7 +2,7 @@ const { Router } = require("express");
 const passport = require("passport");
 
 const validatorHandler = require('./../middlewares/validator.handler');
-const { createUserSchema, signinUserSchema, recoveryUserSchema } = require('./../schemas/user.schema');
+const { createUserSchema, signInUserSchema, confirmEmailUserSchema, recoveryUserSchema } = require('./../schemas/user.schema');
 
 const AuthService = require("./../services/auth.service");
 const service = new AuthService();
@@ -23,8 +23,21 @@ router.post("/signup",
     }
 );
 
+router.post("/confirm-email", 
+    validatorHandler(confirmEmailUserSchema, 'body'),
+    async (req, res, next) => {
+        try {
+            const { token, password } = req.body;
+            const result = await service.confirmEmail(token, password);
+            res.json(result);
+        } catch(error) {
+            next(error);
+        }
+    }
+);
+
 router.post("/signin", 
-    validatorHandler(signinUserSchema, 'body'),
+    validatorHandler(signInUserSchema, 'body'),
     passport.authenticate("local", {session: false}),
     async (req, res, next) => {
         try {

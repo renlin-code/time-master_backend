@@ -23,13 +23,20 @@ const getUserSchema = Joi.object({
   id: id.required()
 });
 
-const signinUserSchema = Joi.object({
+const confirmEmailUserSchema = Joi.object({
+  token: token.required(),
+  password: password.required()
+})
+
+
+const signInUserSchema = Joi.object({
   email: email.required(),
   password: password.required()
 })
+
 const recoveryUserSchema = Joi.object({
   token: token.required(),
   newPassword: password.required()
 })
 
-module.exports = { createUserSchema, updateUserSchema, getUserSchema, signinUserSchema, recoveryUserSchema }
+module.exports = { createUserSchema, updateUserSchema, getUserSchema, confirmEmailUserSchema, signInUserSchema, recoveryUserSchema }

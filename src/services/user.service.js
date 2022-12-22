@@ -21,10 +21,10 @@ class UserService {
     }
 
     async create(body) {
-        const userDb = await models.User.findOne({
+        const userFromDb = await models.User.findOne({
             where: { email: body.email }
         });
-        if (userDb) {
+        if (userFromDb) {
             throw boom.conflict("This user already exists");
         }
         const hash = await bcrypt.hash(body.password, 10);
@@ -32,7 +32,7 @@ class UserService {
             ...body,
             password: hash
         });
-        delete user.dataValues.password;
+        delete user.password;
         return user;
     } 
     

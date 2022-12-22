@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { config } = require("./../config/config")
 const nodemailer = require("nodemailer");
+const { models } = require('./../libs/sequelize');
 
 const UserService = require("./user.service");
 const service = new UserService();
@@ -10,12 +11,27 @@ const service = new UserService();
 
 class AuthService {
     async signUp(body) {
-        const user = await service.create(body);
-        const userWithToken = this.signToken(user);
-        const link = `https://fronted.com/dashboard?token=${userWithToken.token}`;
+        const token = jwt.sign(body.email, config.jwtSecret);
+
+        const user = {
+            ...body,
+            signUpToken: token
+        }
+        console.log(user)
+        const userFromDb = await models.User.findOne({
+            where: { email: body.email }
+        });
+        if (userFromDb) {
+            if(userFromDb.isConfirmed) {
+                throw boom.conflict("this user has already signed up");
+            }
+            await service.delete(userFromDb.id);
+        }
+        await service.create(user);
+        const link = `https://fronted.com/dashboard?token=${token}`;
         const mail = {
             from: `"Time Master"<${config.smtpEmail}>`,
-            to: `${user.email}`,
+            to: `${body.email}`,
             subject: "Sign in confirmation",
             html: `<p>Please, enter through this link to confirm your email => ${link}</p>`,
         }
@@ -23,11 +39,32 @@ class AuthService {
         return result;
     }
     
-    async getUser(email, password) {
-        const user = await service.findOneByEmail(email);
-        if(!user) {
+    async confirmEmail(token, password) {
+        const payload = jwt.verify(token, config.jwtSecret);
+        const user = await service.findOneByEmail(payload);
+        if(user.signUpToken !== token) {
             throw boom.unauthorized();
         }
+        const isMatch = await bcrypt.compare(password, user.password);
+        if(!isMatch) {
+            throw boom.unauthorized();
+        }
+        const updatedUser = await service.update(user.id, {
+            isConfirmed: true,
+            signUpToken: null
+        })
+        delete updatedUser.dataValues.password;
+        delete updatedUser.dataValues.recoveryToken;
+        
+        return this.signToken(updatedUser);
+    }
+
+    async getUser(email, password) {
+        const user = await service.findOneByEmail(email);
+        if(!user || !user.isConfirmed) {
+            throw boom.unauthorized();
+        }
+
         const isMatch = await bcrypt.compare(password, user.password);
         if(!isMatch) {
             throw boom.unauthorized();
@@ -35,7 +72,6 @@ class AuthService {
         delete user.dataValues.password;
         delete user.dataValues.recoveryToken;
         return user;
-
     }
     signToken(user) {
         const payload = { sub: user.id };
@@ -77,7 +113,6 @@ class AuthService {
             const hash = await bcrypt.hash(newPassword, 10);
             await service.update(user.id, {recoveryToken: null, password: hash});
             return { message: "password changed" };
-            
         } catch (error) {
             throw boom.unauthorized();
         }
