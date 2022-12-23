@@ -28,7 +28,6 @@ const confirmEmailUserSchema = Joi.object({
   password: password.required()
 })
 
-
 const signInUserSchema = Joi.object({
   email: email.required(),
   password: password.required()
@@ -39,4 +38,13 @@ const recoveryUserSchema = Joi.object({
   newPassword: password.required()
 })
 
-module.exports = { createUserSchema, updateUserSchema, getUserSchema, confirmEmailUserSchema, signInUserSchema, recoveryUserSchema }
+const editProfileUserSchema = Joi.object({
+  name: name.required()
+})
+
+const deleteProfileUserSchema = Joi.object({
+  password: password.required()
+})
+
+
+module.exports = { createUserSchema, updateUserSchema, getUserSchema, confirmEmailUserSchema, signInUserSchema, recoveryUserSchema, editProfileUserSchema, deleteProfileUserSchema }

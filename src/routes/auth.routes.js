@@ -74,6 +74,4 @@ router.post("/change-password",
     }
 );
 
-
-
 module.exports = router;

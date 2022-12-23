@@ -1,19 +1,76 @@
 const { Router } = require("express");
 const passport = require("passport");
 const boom = require("@hapi/boom");
+const bcrypt = require("bcrypt");
 
 const TaskService = require("../services/task.service");
 const CategoryService = require("../services/category.service");
 const UserService = require("./../services/user.service");
 
 const validatorHandler = require('./../middlewares/validator.handler');
+const { editProfileUserSchema, deleteProfileUserSchema } = require('./../schemas/user.schema');
 const { getTaskSchema, createTaskSchema, updateTaskSchema, queryTaskSchema } = require('./../schemas/task.schema');
 const { getCategorySchema, createCategoryByUserSchema, updateCategoryByUserSchema } = require('./../schemas/category.schema');
 
 const router = Router();
+const userService = new UserService();
 const taskService = new TaskService();
 const categoryService = new CategoryService();
-const userService = new UserService();
+
+router.get("/", 
+    passport.authenticate("jwt", {session: false}),
+    async (req, res, next) => {
+        try {
+            const userId = req.user.sub;
+            const user = await userService.findOne(userId);
+            delete user.dataValues.password;
+            res.json(user);
+        } catch(error) {
+            next(error);
+        }
+    }
+);
+
+router.patch("/", 
+    validatorHandler(editProfileUserSchema, 'body'),
+    passport.authenticate("jwt", {session: false}),
+    async (req, res, next) => {
+        try {
+            const userId = req.user.sub;
+            const body = req.body;
+            const editedUser = await userService.update(userId, body);
+            delete editedUser.dataValues.password;
+            res.json(editedUser);
+        } catch(error) {
+            next(error);
+        }
+    }
+);
+
+router.delete("/", 
+    validatorHandler(deleteProfileUserSchema, 'body'),
+    passport.authenticate("jwt", {session: false}),
+    async (req, res, next) => {
+        try {
+            const userId = req.user.sub;
+            const { password } = req.body;
+            const user = await userService.findOne(userId);
+
+            const isMatch = await bcrypt.compare(password, user.password);
+            if(!isMatch) {
+                throw boom.unauthorized();
+            }    
+            await userService.delete(userId);
+            delete user.dataValues.password;
+            res.json({ userId });
+        } catch(error) {
+            next(error);
+        }
+    }
+);
+
+
+
 
 router.get("/my-tasks", 
     validatorHandler(queryTaskSchema, 'query'),

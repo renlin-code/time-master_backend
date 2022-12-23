@@ -32,7 +32,7 @@ class AuthService {
         const mail = {
             from: `"Time Master"<${config.smtpEmail}>`,
             to: `${body.email}`,
-            subject: "Sign in confirmation",
+            subject: "Sign up confirmation",
             html: `<p>Please, enter through this link to confirm your email => ${link}</p>`,
         }
         const result = await this.sendMail(mail);
@@ -112,7 +112,10 @@ class AuthService {
             }
             const hash = await bcrypt.hash(newPassword, 10);
             await service.update(user.id, {recoveryToken: null, password: hash});
-            return { message: "password changed" };
+
+            const resultUser = await service.findOne(user.id);
+            delete resultUser.dataValues.password;
+            return this.signToken(resultUser);
         } catch (error) {
             throw boom.unauthorized();
         }
