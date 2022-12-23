@@ -17,7 +17,6 @@ class AuthService {
             ...body,
             signUpToken: token
         }
-        console.log(user)
         const userFromDb = await models.User.findOne({
             where: { email: body.email }
         });
@@ -76,7 +75,7 @@ class AuthService {
     signToken(user) {
         const payload = { sub: user.id };
 
-        const token = jwt.sign(payload, config.jwtSecret, {expiresIn: "30min"});
+        const token = jwt.sign(payload, config.jwtSecret, {expiresIn: "24h"});
         return {
             user,
             token
