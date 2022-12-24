@@ -9,7 +9,7 @@ const UserService = require("./../services/user.service");
 
 const validatorHandler = require('./../middlewares/validator.handler');
 const { editProfileUserSchema, deleteProfileUserSchema } = require('./../schemas/user.schema');
-const { getTaskSchema, createTaskSchema, updateTaskSchema, queryTaskSchema } = require('./../schemas/task.schema');
+const { getTaskSchema, createTaskSchema, updateTaskSchema, queryTaskSchema, searchTaskSchema } = require('./../schemas/task.schema');
 const { getCategorySchema, createCategoryByUserSchema, updateCategoryByUserSchema } = require('./../schemas/category.schema');
 
 const router = Router();
@@ -105,6 +105,22 @@ router.get("/my-tasks/:id",
 
             const task = await taskService.findOne(id);
             res.json(task);
+        } catch(error) {
+            next(error);
+        }
+    }
+);
+
+router.get("/search-tasks", 
+    validatorHandler(searchTaskSchema, 'body'),
+    passport.authenticate("jwt", {session: false}),
+    async (req, res, next) => {
+        try {
+            const userId = req.user.sub;
+            const { searchQuery } = req.body;
+
+            const tasks = await taskService.searchTasks(userId, searchQuery);
+            res.json(tasks);
         } catch(error) {
             next(error);
         }

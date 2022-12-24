@@ -1,7 +1,7 @@
 const boom = require('@hapi/boom');
-
 const { models } = require('./../libs/sequelize');
- 
+const { Op } = require("sequelize");
+
 class TaskService {
     async findAll() {
         const allTasks = await models.Task.findAll({
@@ -63,6 +63,32 @@ class TaskService {
 
         return tasks;
     }
+
+    async searchTasks(userId, searchQuery) {
+        const options = {
+            where: {
+                [Op.and]: [
+                    { "$category.user.id$": userId },
+                    { name: { [Op.iLike]: `%${searchQuery}%` } }
+                ],
+                
+            },
+            include: [
+                {
+                    association: "category",
+                    include: ["user"]
+                }
+            ]
+        }
+        const tasks = await models.Task.findAll(options);
+
+        tasks.map (i => {
+            delete i.dataValues.category.dataValues.user;
+        })
+
+        return tasks;
+    }
+
 }
 
 module.exports = TaskService;
