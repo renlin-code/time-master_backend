@@ -173,7 +173,8 @@ router.patch("/my-tasks/:id",
             const categories = await categoryService.findByUser(userId);
 
             const isHisCategory = categories.some(i => i.id == categoryId);
-            if(!isHisCategory) {
+            
+            if(categoryId && !isHisCategory) {
                 throw boom.unauthorized();
             }
 

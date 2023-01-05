@@ -1,7 +1,7 @@
 const Joi = require("joi");
 
 const id = Joi.number().integer();
-const name = Joi.string().min(3).max(15);
+const name = Joi.string().max(10);
 const color = Joi.string().max(7);
 const userId = Joi.number().integer();
 

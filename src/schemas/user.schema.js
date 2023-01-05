@@ -1,7 +1,7 @@
 const Joi = require("joi").extend(require('@joi/date'));
 
 const id = Joi.number().integer();
-const name = Joi.string().min(3).max(15);
+const name = Joi.string().min(3).max(10);
 const email = Joi.string().email();
 const password = Joi.string().min(4).max(8);
 const token = Joi.string();

@@ -27,7 +27,7 @@ class AuthService {
             await service.delete(userFromDb.id);
         }
         await service.create(user);
-        const link = `https://fronted.com/dashboard?token=${token}`;
+        const link = `${config.frontBaseUrl}/start/confirm-email?token=${token}`;
         const mail = {
             from: `"Time Master"<${config.smtpEmail}>`,
             to: `${body.email}`,
@@ -89,7 +89,7 @@ class AuthService {
         }
         const userAndToken = this.signToken(user);
 
-        const link = `https://fronted.com/recovery?token=${userAndToken.token}`;
+        const link = `${config.frontBaseUrl}/start/new-password?token=${userAndToken.token}`;
         await service.update(user.id, {recoveryToken: userAndToken.token});
 
         const mail = {

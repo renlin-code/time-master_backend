@@ -3,6 +3,7 @@ const boom = require('@hapi/boom');
 const { models } = require('./../libs/sequelize');
 
 const bcrypt = require("bcrypt");
+const { Category } = require('../db/models/category.model');
 
 class UserService {
     async findAll() {
@@ -12,7 +13,10 @@ class UserService {
 
     async findOne(id) {
         const user = await models.User.findByPk(id, {
-            include: ["categories"]
+            include: [{
+                association: "categories",
+                include: ["tasks"]
+            }]
         });
         if (!user) {
             throw boom.notFound("User not found");
