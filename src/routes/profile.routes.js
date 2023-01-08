@@ -112,12 +112,12 @@ router.get("/my-tasks/:id",
 );
 
 router.get("/search-tasks", 
-    validatorHandler(searchTaskSchema, 'body'),
+    validatorHandler(searchTaskSchema, 'query'),
     passport.authenticate("jwt", {session: false}),
     async (req, res, next) => {
         try {
             const userId = req.user.sub;
-            const { searchQuery } = req.body;
+            const { searchQuery } = req.query;
 
             const tasks = await taskService.searchTasks(userId, searchQuery);
             res.json(tasks);
@@ -173,7 +173,7 @@ router.patch("/my-tasks/:id",
             const categories = await categoryService.findByUser(userId);
 
             const isHisCategory = categories.some(i => i.id == categoryId);
-            
+
             if(categoryId && !isHisCategory) {
                 throw boom.unauthorized();
             }

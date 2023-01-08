@@ -1,7 +1,7 @@
 const Joi = require("joi").extend(require('@joi/date'));
 
 const id = Joi.number().integer();
-const name = Joi.string().max(20);
+const name = Joi.string().max(30);
 const date = Joi.date().format('YYYY-MM-DD').utc();
 const done = Joi.boolean();
 const important = Joi.boolean();
@@ -33,7 +33,7 @@ const queryTaskSchema = Joi.object({
 });
 
 const searchTaskSchema = Joi.object({
-  searchQuery: searchQuery.required()
+  searchQuery
 });
 
 module.exports = { createTaskSchema, updateTaskSchema, getTaskSchema, queryTaskSchema, searchTaskSchema }
