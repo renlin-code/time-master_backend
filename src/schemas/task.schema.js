@@ -7,6 +7,8 @@ const done = Joi.boolean();
 const important = Joi.boolean();
 const categoryId = Joi.number().integer();
 const searchQuery = Joi.string();
+const year = Joi.number().integer();
+const month = Joi.number().integer().min(1).max(12);
 
 const createTaskSchema = Joi.object({
   name: name.required(),
@@ -28,12 +30,17 @@ const getTaskSchema = Joi.object({
   id: id.required()
 });
 
-const queryTaskSchema = Joi.object({
+const queryTaskDateSchema = Joi.object({
   date
+});
+
+const monthTasksSchema = Joi.object({
+  year,
+  month
 });
 
 const searchTaskSchema = Joi.object({
   searchQuery
 });
 
-module.exports = { createTaskSchema, updateTaskSchema, getTaskSchema, queryTaskSchema, searchTaskSchema }
+module.exports = { createTaskSchema, updateTaskSchema, getTaskSchema, queryTaskDateSchema, monthTasksSchema, searchTaskSchema }

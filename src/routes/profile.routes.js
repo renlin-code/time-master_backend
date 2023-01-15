@@ -9,8 +9,9 @@ const UserService = require("./../services/user.service");
 
 const validatorHandler = require('./../middlewares/validator.handler');
 const { editProfileUserSchema, deleteProfileUserSchema } = require('./../schemas/user.schema');
-const { getTaskSchema, createTaskSchema, updateTaskSchema, queryTaskSchema, searchTaskSchema } = require('./../schemas/task.schema');
+const { getTaskSchema, createTaskSchema, updateTaskSchema, queryTaskDateSchema, monthTasksSchema, searchTaskSchema } = require('./../schemas/task.schema');
 const { getCategorySchema, createCategoryByUserSchema, updateCategoryByUserSchema } = require('./../schemas/category.schema');
+const { json } = require("sequelize");
 
 const router = Router();
 const userService = new UserService();
@@ -47,7 +48,7 @@ router.patch("/",
     }
 );
 
-router.delete("/", 
+router.post("/", 
     validatorHandler(deleteProfileUserSchema, 'body'),
     passport.authenticate("jwt", {session: false}),
     async (req, res, next) => {
@@ -73,7 +74,7 @@ router.delete("/",
 
 
 router.get("/my-tasks", 
-    validatorHandler(queryTaskSchema, 'query'),
+    validatorHandler(queryTaskDateSchema, 'query'),
     passport.authenticate("jwt", {session: false}),
     async (req, res, next) => {
         try {
@@ -110,6 +111,44 @@ router.get("/my-tasks/:id",
         }
     }
 );
+
+router.get("/month-tasks/:year-:month", 
+    validatorHandler(monthTasksSchema, 'params'),
+    passport.authenticate("jwt", {session: false}),
+    async (req, res, next) => {
+        try {
+            const userId = req.user.sub;
+            const { year, month } = req.params;
+            
+            if((year.length !== 4) || (month.length !== 2)) {
+                throw boom.badRequest("Format must be YYYY-MM");
+            }
+
+            const lastDate = new Date(year, month, 0).getDate();
+            let tasks = [];
+
+            async function* asyncGenerator() {
+                let i = 1;
+                while (i <= lastDate) {
+                  yield i++;
+                }
+            }  
+            const fetchTasksPerDate = async () => {
+                for await (const date of asyncGenerator()) {
+                    const fullDate = `${year}-${month}-${date}`
+                    const dayTasks = await taskService.findByUser(userId, fullDate);
+                    tasks.push(dayTasks)
+                }
+            };
+
+            await fetchTasksPerDate()
+            res.json(tasks);
+        } catch(error) {
+            next(error);
+        }
+    }
+);
+
 
 router.get("/search-tasks", 
     validatorHandler(searchTaskSchema, 'query'),

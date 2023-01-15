@@ -88,7 +88,6 @@ class TaskService {
 
         return tasks;
     }
-
 }
 
 module.exports = TaskService;
