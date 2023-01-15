@@ -149,7 +149,6 @@ router.get("/month-tasks/:year-:month",
     }
 );
 
-
 router.get("/search-tasks", 
     validatorHandler(searchTaskSchema, 'query'),
     passport.authenticate("jwt", {session: false}),
