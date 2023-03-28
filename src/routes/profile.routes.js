@@ -343,6 +343,9 @@ router.delete("/my-categories/:id",
             if(!isHisCategory) {
                 throw boom.unauthorized();
             }
+            if(categories.length <= 1) {
+                throw boom.forbidden("Unable to delete the last category");
+            }
             const category = await categoryService.delete(id);
             res.json(category);
         } catch (error) {
