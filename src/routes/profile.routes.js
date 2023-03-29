@@ -79,9 +79,9 @@ router.get("/my-tasks",
     async (req, res, next) => {
         try {
             const userId = req.user.sub;
-            const { date } = req.query;
+            const { date, from, to } = req.query;
 
-            const tasks = await taskService.findByUser(userId, date);
+            const tasks = await taskService.findByUser(userId, date, from, to);
             res.json(tasks);
         } catch(error) {
             next(error);
@@ -106,43 +106,6 @@ router.get("/my-tasks/:id",
 
             const task = await taskService.findOne(id);
             res.json(task);
-        } catch(error) {
-            next(error);
-        }
-    }
-);
-
-router.get("/month-tasks/:year-:month", 
-    validatorHandler(monthTasksSchema, 'params'),
-    passport.authenticate("jwt", {session: false}),
-    async (req, res, next) => {
-        try {
-            const userId = req.user.sub;
-            const { year, month } = req.params;
-            
-            if((year.length !== 4) || (month.length !== 2)) {
-                throw boom.badRequest("Format must be YYYY-MM");
-            }
-
-            const lastDate = new Date(year, month, 0).getDate();
-            let tasks = [];
-
-            async function* asyncGenerator() {
-                let i = 1;
-                while (i <= lastDate) {
-                  yield i++;
-                }
-            }  
-            const fetchTasksPerDate = async () => {
-                for await (const date of asyncGenerator()) {
-                    const fullDate = `${year}-${month}-${date}`
-                    const dayTasks = await taskService.findByUser(userId, fullDate);
-                    tasks.push(dayTasks)
-                }
-            };
-
-            await fetchTasksPerDate()
-            res.json(tasks);
         } catch(error) {
             next(error);
         }

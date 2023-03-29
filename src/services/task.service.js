@@ -39,7 +39,7 @@ class TaskService {
 
 
     
-    async findByUser(userId, date) {
+    async findByUser(userId, date, from, to) {
         const options = {
             where: {
                 "$category.user.id$": userId
@@ -53,7 +53,12 @@ class TaskService {
         }
         if (date) {
             options.where.date = date;
+        } else {
+            if (from && to) {
+                options.where.date = {[Op.between]: [from, to]}
+            }
         }
+        
         const tasks = await models.Task.findAll(options);
 
         tasks.map (i => {
