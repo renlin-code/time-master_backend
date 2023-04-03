@@ -32,7 +32,7 @@ class AuthService {
             from: `"Time Master"<${config.smtpEmail}>`,
             to: `${body.email}`,
             subject: "Sign up confirmation",
-            html: `<p>Please, enter through this link to confirm your email => ${link}</p>`,
+            html: `<p>Please, enter through this link to confirm your email:<br />${link}</p>`,
         }
         const result = await this.sendMail(mail);
         return result;
@@ -96,7 +96,7 @@ class AuthService {
             from: `"Time Master"<${config.smtpEmail}>`,
             to: `${user.email}`,
             subject: "Password recovery",
-            html: `<p>Please, enter through this link to recover your password => ${link}</p>`,
+            html: `<p>Please, enter through this link to recover your password:<br />${link}</p>`,
         }
         const result = await this.sendMail(mail);
         return result;
