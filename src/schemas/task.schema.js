@@ -1,7 +1,7 @@
 const Joi = require("joi").extend(require('@joi/date'));
 
 const id = Joi.number().integer();
-const name = Joi.string().max(30);
+const name = Joi.string().max(40);
 const date = Joi.date().format('YYYY-MM-DD').utc();
 const from = Joi.date().format('YYYY-MM-DD').utc();
 const to = Joi.date().format('YYYY-MM-DD').utc();
